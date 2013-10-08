@@ -96,6 +96,10 @@ namespace S1_Root
         /// </summary>
         public void Process_Flashing()
         {
+            //TODO : Programatically check /proc/dumchar_info android partition info
+            //android      0x0000000040000000   0x0000000005d00000   2   /dev/block/mmcblk0p5
+            //and generate dynamic count and seek blocks for dd command
+
             this.richTextBox1.Clear();
 
             this.richTextBox1.Text = "Device detected, launching process...\r\n";
