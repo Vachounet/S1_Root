@@ -18,6 +18,8 @@ namespace S1_Root
 {
     public partial class Form1 : Form
     {
+        public const string SystemImageFound = "/storage/sdcard0/system510.img\r\r\n";
+
         AndroidController l_android;
         Device l_device;
         bool l_haveDriver;
@@ -142,6 +144,14 @@ namespace S1_Root
 
             l_adbCommand = Adb.FormAdbCommand("shell chmod 755 /data/local/tmp/busybox");
             this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+
+            l_adbCommand = Adb.FormAdbCommand("shell ls /storage/sdcard0/system510.img");
+            if (Adb.ExecuteAdbCommand(l_adbCommand) != SystemImageFound)
+            {
+                this.richTextBox1.Text += "system510.img can't be found your internal sdcard !";
+                return;
+            }
+
 
             #region ADB Commands
             if (!l_alreadyFlash)
