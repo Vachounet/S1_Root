@@ -38,7 +38,7 @@ namespace S1_Root
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void StartRootClick(object sender, EventArgs e)
         {
             //TODO : Set a correct message
             if (!l_haveDriver)
@@ -74,7 +74,7 @@ namespace S1_Root
                     //Got root ?
                     if (l_device.HasRoot)
                     {
-                        this.richTextBox1.Text = "Device already rooted.";
+                        this.richTextBox1.Text = @"Device already rooted.";
                         this.button1.Enabled = false;
                     }
 
@@ -82,11 +82,11 @@ namespace S1_Root
                 }
                 else if (l_android.ConnectedDevices.Count > 1)
                 {
-                    this.richTextBox1.Text = "Error - Too many connected devices";
+                    this.richTextBox1.Text = @"Error - Too many connected devices";
                 }
                 else
                 {
-                    this.richTextBox1.Text = "Error - No Devices Connected";
+                    this.richTextBox1.Text = @"Error - No Devices Connected";
                 }
             }
         }
@@ -102,19 +102,22 @@ namespace S1_Root
 
             this.richTextBox1.Clear();
 
-            this.richTextBox1.Text = "Device detected, launching process...\r\n";
+            this.richTextBox1.Text = @"Device detected, launching process...
+";
 
             string l_busyboxPath = AppDomain.CurrentDomain.BaseDirectory + "busybox";
 
             AdbCommand l_adbCommand;
 
-            this.richTextBox1.Text += "Pushing busybox...\r\n";
+            this.richTextBox1.Text += @"Pushing busybox...
+";
 
             l_adbCommand = Adb.FormAdbCommand("push \"" + l_busyboxPath + "\" /data/local/tmp");
             this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
-            this.richTextBox1.Text += "Setting perms to busybox...\r\n";
+            this.richTextBox1.Text += @"Setting perms to busybox...
+";
 
             l_adbCommand = Adb.FormAdbCommand("shell chmod 755 /data/local/tmp/busybox");
             this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
@@ -220,12 +223,13 @@ namespace S1_Root
 
             Thread.Sleep(3000);
 
-            this.richTextBox1.Text += "Flashing modded system.img (if it freezes more than 10min, kill this app...)\r\n";
+            this.richTextBox1.Text += @"Flashing modded system.img (if it freezes more than 10min, kill this app...)
+";
             Adb.ExecuteAdbShellCommandInputString(null, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144", "exit", "exit", "exit");
             //Adb.ExecuteAdbShellCommandInputString(device, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox touch /data/local/tmp/test2", "exit", "exit", "exit");
 
-            this.richTextBox1.Text += "Process finished. Reboot now !";
-            this.richTextBox1.Text = "Error - No Devices Connected";
+            this.richTextBox1.Text += @"Process finished. Reboot now !";
+            this.richTextBox1.Text = @"Error - No Devices Connected";
         }
 
         /// <summary>
