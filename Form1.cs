@@ -12,6 +12,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Management;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace S1_Root
 {
@@ -20,6 +21,7 @@ namespace S1_Root
         AndroidController l_android;
         Device l_device;
         bool l_haveDriver;
+        bool l_alreadyFlash;
 
         public Form1()
         {
@@ -40,6 +42,12 @@ namespace S1_Root
         /// <param name="e"></param>
         private void StartRootClick(object sender, EventArgs e)
         {
+            //Refresh device
+            bool l_deviceFound = InitRoot();
+
+            if (!l_deviceFound)
+                return;
+
             //TODO : Set a correct message
             if (!l_haveDriver)
                 return;
@@ -55,10 +63,11 @@ namespace S1_Root
         /// <summary>
         /// Set connected device
         /// </summary>
-        public void InitRoot()
+        public bool InitRoot()
         {
             //Init our Controller instance
-            l_android = AndroidController.Instance;
+            if (l_android == null)
+                l_android = AndroidController.Instance;
 
             l_android.UpdateDeviceList();
 
@@ -74,21 +83,33 @@ namespace S1_Root
                     //Got root ?
                     if (l_device.HasRoot)
                     {
-                        this.richTextBox1.Text = @"Device already rooted.";
-                        this.button1.Enabled = false;
+                        DialogResult l_haveRootResult = MessageBox.Show(@"Your device is already rooted, no need to flash it again." + Environment.NewLine + "Do you still want to flash a new system510.img ?", "Device Rooted", MessageBoxButtons.YesNo);
+                        if (l_haveRootResult == DialogResult.Yes)
+                        {
+                            l_alreadyFlash = true;
+                            this.button1.Enabled = true;
+                        }
+                        else
+                        {
+                            this.richTextBox1.Text = @"Device already rooted.";
+                            this.button1.Enabled = false;
+                        }
                     }
 
                     this.checkBox1.Checked = l_device.HasRoot;
+                    return true;
                 }
                 else if (l_android.ConnectedDevices.Count > 1)
                 {
                     this.richTextBox1.Text = @"Error - Too many connected devices";
                 }
-                else
-                {
-                    this.richTextBox1.Text = @"Error - No Devices Connected";
-                }
             }
+            else
+            {
+                this.richTextBox1.Text = @"Error - No Devices Connected";
+
+            }
+            return false;
         }
 
         /// <summary>
@@ -123,110 +144,120 @@ namespace S1_Root
             this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
             #region ADB Commands
-            this.richTextBox1.Text += "Launching telnetd...\r\n";
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+            if (!l_alreadyFlash)
+            {
+                this.richTextBox1.Text += "Launching telnetd...\r\n";
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
-
-
-
-            l_adbCommand = Adb.FormAdbCommand("shell am start -n com.mediatek.engineermode/.EngineerMode com.mediatek.connectivity/.CdsInfoActivity");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand) + "\r\n";
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell am start -n com.mediatek.engineermode/.EngineerMode com.mediatek.connectivity/.CdsInfoActivity");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand) + "\r\n";
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_ENTER");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"/data/local/tmp/busybox\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_ENTER");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"/data/local/tmp/busybox\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"telnetd\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"telnetd\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"-l\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"-l\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"/system/bin/sh\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"/system/bin/sh\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"-p\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"-p\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
 
-            l_adbCommand = Adb.FormAdbCommand("shell input text \"1234\"");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
-            l_adbCommand = Adb.FormAdbCommand("shell input tap 50 300");
-            this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_SPACE");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
-            this.richTextBox1.Text += "Telnetd running...\r\n";
+
+                l_adbCommand = Adb.FormAdbCommand("shell input text \"1234\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+
+                l_adbCommand = Adb.FormAdbCommand("shell input tap 50 300");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+
+                this.richTextBox1.Text += "Telnetd running...\r\n";
+            }
             #endregion
 
             Thread.Sleep(3000);
 
             this.richTextBox1.Text += @"Flashing modded system.img (if it freezes more than 10min, kill this app...)
 ";
-            Adb.ExecuteAdbShellCommandInputString(null, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144", "exit", "exit", "exit");
+            if (!l_alreadyFlash)
+                Adb.ExecuteAdbShellCommandInputString(null, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144", "exit", "exit", "exit");
             //Adb.ExecuteAdbShellCommandInputString(device, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox touch /data/local/tmp/test2", "exit", "exit", "exit");
+            else
+            {
+                l_adbCommand = Adb.FormAdbCommand("shell su -c \"/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144\"");
+                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
+            }
+
 
             this.richTextBox1.Text += @"Process finished. Reboot now !";
         }
