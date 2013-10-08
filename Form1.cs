@@ -229,7 +229,6 @@ namespace S1_Root
             //Adb.ExecuteAdbShellCommandInputString(device, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox touch /data/local/tmp/test2", "exit", "exit", "exit");
 
             this.richTextBox1.Text += @"Process finished. Reboot now !";
-            this.richTextBox1.Text = @"Error - No Devices Connected";
         }
 
         /// <summary>
