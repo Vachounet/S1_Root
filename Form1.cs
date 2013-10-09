@@ -82,9 +82,23 @@ namespace S1_Root
                     string serial = l_android.ConnectedDevices[0];
                     l_device = l_android.GetConnectedDevice(serial);
 
+
+                    DeviceInfo l_devInfo = new DeviceInfo(l_device.BuildProp);
+
+                    this.richTextBox1.Text = l_devInfo.Manufacturer + " " + l_devInfo.Model + " (" + l_devInfo.SKU + ")\r\n";
+                    this.richTextBox1.Text += l_devInfo.DisplayID + "\r\n";
+                    this.richTextBox1.Text += l_devInfo.CPU + " @ " + l_devInfo.CPUSpeed + "\r\n";
+
                     //Got root ?
-                    if (l_device.HasRoot)
+                    if (l_device.HasRoot && !l_alreadyFlash)
                     {
+                        this.checkBox1.Text += l_device.Su.Version;
+
+                        if (l_device.BusyBox.IsInstalled)
+                        {
+                            this.checkBox2.Checked = true;
+                        }
+
                         DialogResult l_haveRootResult = MessageBox.Show(@"Your device is already rooted, no need to flash it again." + Environment.NewLine + "Do you still want to flash a new system510.img ?", "Device Rooted", MessageBoxButtons.YesNo);
                         if (l_haveRootResult == DialogResult.Yes)
                         {
@@ -93,9 +107,13 @@ namespace S1_Root
                         }
                         else
                         {
-                            this.richTextBox1.Text = @"Device already rooted.";
+                            this.richTextBox1.Text += @"Device already rooted.";                            
                             this.button1.Enabled = false;
                         }
+                    }
+                    else
+                    {
+                        this.button1.Enabled = true;
                     }
 
                     this.checkBox1.Checked = l_device.HasRoot;
@@ -108,9 +126,11 @@ namespace S1_Root
             }
             else
             {
+                MessageBox.Show(@"0 device detected. Please connect your device, set USB Debug on your phone, and/or check ADB drivers");
                 this.richTextBox1.Text = @"Error - No Devices Connected";
 
             }
+
             return false;
         }
 
@@ -282,5 +302,27 @@ namespace S1_Root
             return true;
         }
 
+    }
+
+    public class DeviceInfo
+    {
+        public string Manufacturer;
+        public string Model;
+        public string SKU;
+        public string AndroidVersion;
+        public string DisplayID;
+        public string CPU;
+        public string CPUSpeed;
+
+        public DeviceInfo(BuildProp p_buildProp)
+        {
+            Manufacturer = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.product.manufacturer")) ? p_buildProp.GetProp("ro.product.manufacturer") : string.Empty;
+            Model = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.product.model")) ? p_buildProp.GetProp("ro.product.model") : string.Empty;
+            SKU = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.build.sku")) ? p_buildProp.GetProp("ro.build.sku") : string.Empty;
+            AndroidVersion = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.build.version.release")) ? p_buildProp.GetProp("ro.build.version.release") : string.Empty;
+            DisplayID = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.build.display.id")) ? p_buildProp.GetProp("ro.build.display.id") : string.Empty;
+            CPU = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.cpu.version")) ? p_buildProp.GetProp("ro.cpu.version") : string.Empty;
+            CPUSpeed = !string.IsNullOrEmpty(p_buildProp.GetProp("ro.cpu.speed")) ? p_buildProp.GetProp("ro.cpu.speed") : string.Empty;
+        }
     }
 }
