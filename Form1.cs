@@ -341,7 +341,6 @@ namespace S1_Root
             else
             {
                 Adb.ExecuteAdbShellCommandInputString(null, "su", l_ddCommand, "exit", "exit");
-                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
             }
 
 
