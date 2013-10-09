@@ -23,6 +23,8 @@ namespace S1_Root
         Device l_device;
         bool l_haveDriver;
         bool l_alreadyFlash;
+        long l_seekBlocks;
+        long l_countBlocks;
 
         public Form1()
         {
@@ -184,8 +186,6 @@ namespace S1_Root
             //android      0x0000000040000000   0x0000000005d00000   2   /dev/block/mmcblk0p5
             //and generate dynamic count and seek blocks for dd command
 
-            //this.richTextBox1.Clear();
-
             this.richTextBox1.Text += @"Launching process...
 ";
             long systemStartAddr;
@@ -193,10 +193,14 @@ namespace S1_Root
             GetPartitionsInfos(out systemStartAddr, out systemEndAddr);
             if (systemEndAddr == 0 || systemStartAddr == 0)
                 return;
-            this.richTextBox1.Text += string.Format(@"DD will use @{0} - @{1} => {2} - {3}
-", systemStartAddr, systemEndAddr, systemStartAddr / 4096, systemEndAddr / 4096);
 
-            return;
+            l_countBlocks = systemStartAddr / 4096;
+            l_seekBlocks = systemEndAddr / 4096;
+
+            this.richTextBox1.Text += string.Format(@"DD will use @{0} - @{1} => {2} - {3}
+", systemStartAddr, systemEndAddr, l_countBlocks, l_seekBlocks);
+
+            //return;
 
             string l_busyboxPath = AppDomain.CurrentDomain.BaseDirectory + "busybox";
 
@@ -329,12 +333,14 @@ namespace S1_Root
 
             this.richTextBox1.Text += @"Flashing modded system.img (if it freezes more than 10min, kill this app...)
 ";
+            string l_ddCommand = string.Format("/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek={0} count={1}", l_seekBlocks, l_countBlocks);
+
             if (!l_alreadyFlash)
-                Adb.ExecuteAdbShellCommandInputString(null, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144", "exit", "exit", "exit");
+                Adb.ExecuteAdbShellCommandInputString(null, "/data/local/tmp/busybox telnet 127.0.0.1 1234", l_ddCommand, "exit", "exit", "exit");
             //Adb.ExecuteAdbShellCommandInputString(device, "/data/local/tmp/busybox telnet 127.0.0.1 1234", "/data/local/tmp/busybox touch /data/local/tmp/test2", "exit", "exit", "exit");
             else
             {
-                l_adbCommand = Adb.FormAdbCommand("shell su -c \"/data/local/tmp/busybox cat /storage/sdcard0/system510.img | dd of=/dev/block/mmcblk0 bs=4096 seek=23808 count=262144\"");
+                Adb.ExecuteAdbShellCommandInputString(null, "su", l_ddCommand, "exit", "exit");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
             }
 
