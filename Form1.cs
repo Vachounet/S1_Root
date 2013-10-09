@@ -235,16 +235,10 @@ namespace S1_Root
                 l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
-
-                l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
-                this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
-
-
-
                 l_adbCommand = Adb.FormAdbCommand("shell am start -n com.mediatek.engineermode/.EngineerMode com.mediatek.connectivity/.CdsInfoActivity");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand) + "\r\n";
 
-
+                Thread.Sleep(2000);
 
                 l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_DPAD_DOWN");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
