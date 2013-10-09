@@ -128,6 +128,14 @@ namespace S1_Root
                 androidSec = line;
                 break;
             }
+            if (string.IsNullOrEmpty(androidSec))
+            {
+                this.richTextBox1.Text += @"Unable to get system partition infos.
+";
+                startAddr = 0;
+                endAddr = 0;
+                return;
+            }
             var addrs = androidSec.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
             var startA = addrs[1];
             var endA = addrs[2];
@@ -141,6 +149,8 @@ namespace S1_Root
             }
             catch (Exception ex)
             {
+                this.richTextBox1.Text += @"Unable to parse system partition infos.
+";
                 startAddr = 0;
                 endAddr = 0;
             }
@@ -162,6 +172,9 @@ namespace S1_Root
             long systemStartAddr;
             long systemEndAddr;
             GetPartitionsInfos(out systemStartAddr, out systemEndAddr);
+            if (systemEndAddr == 0 || systemStartAddr == 0)
+                return;
+
             this.richTextBox1.Text += string.Format(@"DD will use @{0} - @{1} => {2} - {3}
 ", systemStartAddr, systemEndAddr, systemStartAddr / 4096, systemEndAddr / 4096);
 
