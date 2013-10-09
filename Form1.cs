@@ -135,6 +135,11 @@ namespace S1_Root
             return false;
         }
 
+        /// <summary>
+        /// Generate blocks size for dd command
+        /// </summary>
+        /// <param name="startAddr"></param>
+        /// <param name="endAddr"></param>
         private void GetPartitionsInfos(out long startAddr, out long endAddr)
         {
             this.richTextBox1.Text += @"Getting system partition infos...
@@ -182,10 +187,6 @@ namespace S1_Root
         /// </summary>
         public void Process_Flashing()
         {
-            //TODO : Programatically check /proc/dumchar_info android partition info
-            //android      0x0000000040000000   0x0000000005d00000   2   /dev/block/mmcblk0p5
-            //and generate dynamic count and seek blocks for dd command
-
             this.richTextBox1.Text += @"Launching process...
 ";
             long systemStartAddr;
