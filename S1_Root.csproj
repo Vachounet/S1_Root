@@ -82,7 +82,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D:\AndroidLib-master\AndroidLib\AndroidLib.csproj">
+    <ProjectReference Include="..\AndroidLib\AndroidLib\AndroidLib.csproj">
       <Project>{F5F92F16-C783-4B17-B725-B06F1D725B9C}</Project>
       <Name>AndroidLib</Name>
     </ProjectReference>

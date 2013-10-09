@@ -12,7 +12,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Management;
 using Microsoft.Win32;
-using System.Windows.Forms;
 
 namespace S1_Root
 {
@@ -85,15 +84,16 @@ namespace S1_Root
                     //Got root ?
                     if (l_device.HasRoot)
                     {
-                        DialogResult l_haveRootResult = MessageBox.Show(@"Your device is already rooted, no need to flash it again." + Environment.NewLine + "Do you still want to flash a new system510.img ?", "Device Rooted", MessageBoxButtons.YesNo);
+                        DialogResult l_haveRootResult = MessageBox.Show(@"Your device is already rooted, no need to flash it again." + Environment.NewLine + @"Do you still want to flash a new system510.img ?", @"Device Rooted", MessageBoxButtons.YesNo);
                         if (l_haveRootResult == DialogResult.Yes)
                         {
+                            this.richTextBox1.Text = string.Format("Device detected with ID : {0})", serial);
                             l_alreadyFlash = true;
                             this.button1.Enabled = true;
                         }
                         else
                         {
-                            this.richTextBox1.Text = @"Device already rooted.";
+                            this.richTextBox1.Text = string.Format("Device already rooted. (ID : {0})", serial);
                             this.button1.Enabled = false;
                         }
                     }
@@ -114,6 +114,38 @@ namespace S1_Root
             return false;
         }
 
+        private void GetPartitionsInfos(out long startAddr, out long endAddr)
+        {
+            this.richTextBox1.Text += @"Getting system partition infos...
+";
+            AdbCommand l_adbCommand;
+            l_adbCommand = Adb.FormAdbCommand("shell cat /proc/dumchar_info");
+            var procInfos = Adb.ExecuteAdbCommand(l_adbCommand);
+            var lines = procInfos.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None);
+            var androidSec = string.Empty;
+            foreach (var line in lines.Where(line => line.StartsWith("android")))
+            {
+                androidSec = line;
+                break;
+            }
+            var addrs = androidSec.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+            var startA = addrs[1];
+            var endA = addrs[2];
+            this.richTextBox1.Text += string.Format(@"System found at {0} - {1}
+", startA, endA);
+
+            try
+            {
+                startAddr = Convert.ToInt64(startA, 16); ;
+                endAddr = Convert.ToInt64(endA, 16);
+            }
+            catch (Exception ex)
+            {
+                startAddr = 0;
+                endAddr = 0;
+            }
+        }
+
         /// <summary>
         /// Launch flash process
         /// </summary>
@@ -125,8 +157,15 @@ namespace S1_Root
 
             this.richTextBox1.Clear();
 
-            this.richTextBox1.Text = @"Device detected, launching process...
+            this.richTextBox1.Text = @"Launching process...
 ";
+            long systemStartAddr;
+            long systemEndAddr;
+            GetPartitionsInfos(out systemStartAddr, out systemEndAddr);
+            this.richTextBox1.Text += string.Format(@"DD will use @{0} - @{1} => {2} - {3}
+", systemStartAddr, systemEndAddr, systemStartAddr / 4096, systemEndAddr / 4096);
+
+            return;
 
             string l_busyboxPath = AppDomain.CurrentDomain.BaseDirectory + "busybox";
 
@@ -148,7 +187,7 @@ namespace S1_Root
             l_adbCommand = Adb.FormAdbCommand("shell ls /storage/sdcard0/system510.img");
             if (Adb.ExecuteAdbCommand(l_adbCommand) != SystemImageFound)
             {
-                this.richTextBox1.Text += "system510.img can't be found your internal sdcard !";
+                this.richTextBox1.Text += @"system510.img can't be found in your internal sdcard !";
                 return;
             }
 
