@@ -100,7 +100,7 @@ namespace S1_Root
                         DialogResult l_haveRootResult = MessageBox.Show(@"Your device is already rooted, no need to flash it again." + Environment.NewLine + @"Do you still want to flash a new system510.img ?", @"Device Rooted", MessageBoxButtons.YesNo);
                         if (l_haveRootResult == DialogResult.Yes)
                         {
-                            this.richTextBox1.Text += string.Format("Device detected with ID : {0})", serial);
+                            this.richTextBox1.Text += string.Format("Device detected with ID : {0}", serial);
                             l_alreadyFlash = true;
                             this.button1.Enabled = true;
                         }
