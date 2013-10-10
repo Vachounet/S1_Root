@@ -93,10 +93,19 @@ namespace S1_Root
                     this.richTextBox1.Text += l_devInfo.CPU + " @ " + l_devInfo.CPUSpeed + "\r\n";
 
                     //Have correct OS version ?
-                    if (l_devInfo.DisplayID != CurrentOSVersion)
+                    if (!string.IsNullOrEmpty(l_devInfo.DisplayID))
+                    {
+                        if (l_devInfo.DisplayID != CurrentOSVersion)
+                        {
+                            this.button1.Enabled = false;
+                            MessageBox.Show("You current OS version does not match required one. Process stop !");
+                            return false;
+                        }
+                    }
+                    else
                     {
                         this.button1.Enabled = false;
-                        MessageBox.Show("You current OS version does not match required one. Process stop !");
+                        MessageBox.Show("You current OS version cannot be read. Process stop !");
                         return false;
                     }
 
