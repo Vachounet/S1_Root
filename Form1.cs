@@ -19,6 +19,8 @@ namespace S1_Root
     {
         public const string SystemImageFound = "/storage/sdcard0/system510.img\r\r\n";
 
+        public const string CurrentOSVersion = "Acer_AV052_S510_1.130.00_WW_GEN1";
+
         AndroidController l_android;
         Device l_device;
         bool l_haveDriver;
@@ -89,6 +91,14 @@ namespace S1_Root
                     this.richTextBox1.Text = l_devInfo.Manufacturer + " " + l_devInfo.Model + " (" + l_devInfo.SKU + ")\r\n";
                     this.richTextBox1.Text += l_devInfo.DisplayID + "\r\n";
                     this.richTextBox1.Text += l_devInfo.CPU + " @ " + l_devInfo.CPUSpeed + "\r\n";
+
+                    //Have correct OS version ?
+                    if (l_devInfo.DisplayID != CurrentOSVersion)
+                    {
+                        this.button1.Enabled = false;
+                        MessageBox.Show("You current OS version does not match required one. Process stop !");
+                        return false;
+                    }
 
                     //Got root ?
                     if (l_device.HasRoot && !l_alreadyFlash)
