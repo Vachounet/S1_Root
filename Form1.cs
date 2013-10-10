@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using RegawMOD.Android;
 using System.Threading;
-using System.IO;
-using System.Diagnostics;
-using System.Management;
-using Microsoft.Win32;
 
 namespace S1_Root
 {
@@ -98,14 +89,14 @@ namespace S1_Root
                         if (l_devInfo.DisplayID != CurrentOSVersion)
                         {
                             this.button1.Enabled = false;
-                            MessageBox.Show("You current OS version does not match required one. Process stop !");
+                            MessageBox.Show(@"You current OS version does not match required one. Process stop !");
                             return false;
                         }
                     }
                     else
                     {
                         this.button1.Enabled = false;
-                        MessageBox.Show("You current OS version cannot be read. Process stop !");
+                        MessageBox.Show(@"You current OS version cannot be read. Process stop !");
                         return false;
                     }
 
