@@ -82,14 +82,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D:\AndroidLib-master\AndroidLib\AndroidLib.csproj">
+    <Content Include="logo.ico" />
+    <Content Include="logo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AndroidLib-master\AndroidLib\AndroidLib.csproj">
       <Project>{F5F92F16-C783-4B17-B725-B06F1D725B9C}</Project>
       <Name>AndroidLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="logo.ico" />
-    <Content Include="logo.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
