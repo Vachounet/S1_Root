@@ -10,7 +10,7 @@ namespace S1_Root
     {
         public const string SystemImageFound = "/storage/sdcard0/system510.img\r\r\n";
 
-        public const string CurrentOSVersion = "Acer_AV052_S510_1.130.00_WW_GEN1";
+        public const string[] CurrentOSVersion = { "Acer_AV052_S510_1.177.00_WW_GEN1", "Acer_AV052_S510_1.130.00_WW_GEN1" };
 
         AndroidController l_android;
         Device l_device;
@@ -86,7 +86,7 @@ namespace S1_Root
                     //Have correct OS version ?
                     if (!string.IsNullOrEmpty(l_devInfo.DisplayID))
                     {
-                        if (l_devInfo.DisplayID != CurrentOSVersion)
+                        if (!CurrentOSVersion.Any(cur => cur == l_devInfo.DisplayID))
                         {
                             this.button1.Enabled = false;
                             MessageBox.Show(@"You current OS version does not match required one. Process stop !");
@@ -157,7 +157,7 @@ namespace S1_Root
             AdbCommand l_adbCommand;
             l_adbCommand = Adb.FormAdbCommand("shell cat /proc/dumchar_info");
             var procInfos = Adb.ExecuteAdbCommand(l_adbCommand);
-            var lines = procInfos.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None);
+            var lines = procInfos.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
             var androidSec = string.Empty;
             foreach (var line in lines.Where(line => line.StartsWith("android")))
             {
@@ -172,7 +172,7 @@ namespace S1_Root
                 endAddr = 0;
                 return;
             }
-            var addrs = androidSec.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+            var addrs = androidSec.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             var startA = addrs[1];
             var endA = addrs[2];
             this.richTextBox1.Text += string.Format(@"System found at {0} - {1}
@@ -245,6 +245,8 @@ namespace S1_Root
                 l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_HOME");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
+                Thread.Sleep(2000);
+
                 l_adbCommand = Adb.FormAdbCommand("shell am start -n com.mediatek.engineermode/.EngineerMode com.mediatek.connectivity/.CdsInfoActivity");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand) + "\r\n";
 
@@ -273,7 +275,7 @@ namespace S1_Root
                 l_adbCommand = Adb.FormAdbCommand("shell input keyevent KEYCODE_ENTER");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
 
-
+                Thread.Sleep(2000);
 
                 l_adbCommand = Adb.FormAdbCommand("shell input text \"/data/local/tmp/busybox\"");
                 this.richTextBox1.Text += Adb.ExecuteAdbCommand(l_adbCommand);
