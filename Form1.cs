@@ -10,7 +10,7 @@ namespace S1_Root
     {
         public const string SystemImageFound = "/storage/sdcard0/system510.img\r\r\n";
 
-        public const string[] CurrentOSVersion = { "Acer_AV052_S510_1.177.00_WW_GEN1", "Acer_AV052_S510_1.130.00_WW_GEN1" };
+        public static string[] CurrentOSVersion = { "Acer_AV052_S510_1.177.00_WW_GEN1", "Acer_AV052_S510_1.130.00_WW_GEN1" };
 
         AndroidController l_android;
         Device l_device;
